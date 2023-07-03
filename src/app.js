@@ -44,8 +44,8 @@ app.post("/participants", async(req, res) => {
     if (validation.error) {
         const errors = validation.error.details.map(detail => detail.message);
         return res.status(422).send(errors);
-
     }
+
     try {
         const nome = await db.collection("participants").findOne({ name });
         if(nome) return res.status(409).send('Nome já está sendo usado');
