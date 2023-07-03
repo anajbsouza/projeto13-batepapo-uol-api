@@ -101,20 +101,13 @@ app.post("/messages", async(req, res) => {
 })
 
 app.get("/messages", async(req, res) => {
+    const user = req.headers.user;
+    const limit = req.query.limit;
+    const limitNumber = Number(limit);
+
+    if (limit !== undefined && (limitNumber <= 0 || isNaN(limitNumber))) return res.sendStatus(422);
+
     try {
-        const user = req.headers.user;
-        if(!user) {
-            return res.status(422).send("Header 'User' é obrigatório");
-        }
-
-        const limit = req.query.limit;
-        if(limit !== undefined) {
-            const limitNumber = Number(limit);
-            if(!Number.isInteger(limitNumber) || limitNumber <= 0) {
-                return res.status(422).send("Limit inválido");
-            }
-        }
-
         const messagesQuery = db.collection("messages").find({
             $or: [
                 { to: user },
@@ -122,20 +115,17 @@ app.get("/messages", async(req, res) => {
                 { to: "Todos" },
                 { $and: [ { type: "status" }, { $or: [ { to: user }, { to: "Todos" } ] } ] }
             ]
-        });        
-
+        });            
         let messages;
         if(limit !== undefined) {
             messages = await messagesQuery.sort({ time: -1 }).limit(Number(limit)).toArray();
         } else {
             messages = await messagesQuery.toArray();
         }
-
-        res.send(messages);
-    } catch (err) {
-        res.status(500).send(err.message);
+    } catch(err) {
+        res.status(500).send(err.message)
     }
-})
+});
 
 app.post("/status", async(req, res) => {
     const user = req.headers.user;
