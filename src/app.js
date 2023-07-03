@@ -154,7 +154,7 @@ app.post("/status", async(req, res) => {
 
 setInterval(async () => {
     const tenSeconds = Date.now() - 10000;
-    const inactiveUsers = await db.collection("participants").find({ lastStatus: { $lt: tenSecondsAgo } }).toArray();
+    const inactiveUsers = await db.collection("participants").find({ lastStatus: { $lt: tenSeconds } }).toArray();
     
     for(const user of inactiveUsers) {
         // remover participante
