@@ -138,9 +138,20 @@ app.get("/messages", async(req, res) => {
 })
 
 app.post("/status", async(req, res) => {
+    const user = req.headers.user;
+    if (!user) return res.status(404).send();
 
+    const participant = await db.collection("participants").findOne({ name: user });
+    if (!participant) return res.status(404).send();
+
+    try {
+        await db.collection("participants").updateOne({ name: user } , { $set: { lastStatus: Date.now() } });
+        res.status(200).send();
+    } catch(err) {
+        res.status(500).send(err.message)
+    }
 })
 
 // deixa o app escutando
-const PORT = 5008;
+const PORT = 5000;
 app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`))
