@@ -119,10 +119,10 @@ app.get("/messages", async(req, res) => {
             $or: [
                 { to: user },
                 { from: user },
-                { type: "message" },
-                { to: "Todos" }
+                { to: "Todos" },
+                { $and: [ { type: "status" }, { $or: [ { to: user }, { to: "Todos" } ] } ] }
             ]
-        });
+        });        
 
         let messages;
         if(limit !== undefined) {
