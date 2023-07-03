@@ -2,8 +2,8 @@ import joi from "joi";
 import cors from "cors";
 import dayjs from "dayjs";
 import dotenv from "dotenv";
-import express, { application } from "express";
-import { MongoClient, ObjectId } from "mongodb";
+import express from "express";
+import { MongoClient } from "mongodb";
 
 // criando servidor
 const app = express();
