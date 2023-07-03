@@ -38,15 +38,10 @@ app.post("/participants", async(req, res) => {
         const errors = validation.error.details.map(detail => detail.message);
         return res.status(422).send(errors);
 
-        if(nome) return res.status(409).send('Nome já está sendo usado');
-
-            
-
-        
     }
     try {
         const nome = await db.collection("participants").findOne({ name });
-        if(name) return res.status(409).send('Nome já está sendo usado');
+        if(nome) return res.status(409).send('Nome já está sendo usado');
 
         // adicionar o participante
         await db.collection("participants").insertOne({ name, lastStatus: Date.now() });
