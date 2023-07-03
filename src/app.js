@@ -152,6 +152,20 @@ app.post("/status", async(req, res) => {
     }
 })
 
+setInterval(async () => {
+    const tenSeconds = Date.now() - 10000;
+    const inactiveUsers = await db.collection("participants").find({ lastStatus: { $lt: tenSecondsAgo } }).toArray();
+    
+    for(const user of inactiveUsers) {
+        // remover participante
+        await db.collection("participants").deleteOne({ name: user.name });
+
+        // adicionar a mensagem
+        const time = dayjs().format('HH:mm:ss');
+        await db.collection("messages").insertOne({ from: user.name, to: 'Todos', text: 'sai na sala...', type: 'status', time });
+    }
+}, 15000);
+
 // deixa o app escutando
 const PORT = 5000;
 app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`))
